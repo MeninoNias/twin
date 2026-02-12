@@ -6,4 +6,6 @@ export interface IngestionItem {
   content: string;
   sourceType: "discord_message" | "document";
   metadata: IngestionMetadata;
+  userId: string;
+  guildId?: string;
 }

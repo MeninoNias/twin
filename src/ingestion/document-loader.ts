@@ -6,11 +6,23 @@ import { BaseIngestionService } from "@/shared/base-ingestion-service";
 import type { IngestionItem } from "@/shared/types";
 
 class DocumentLoaderService extends BaseIngestionService {
-  constructor(private readonly dirPath: string) {
-    super(new KnowledgeRepository());
+  private userId!: string;
+
+  constructor(
+    private readonly dirPath: string,
+    private readonly userDiscordId: string,
+    private readonly repo: KnowledgeRepository,
+  ) {
+    super(repo);
   }
 
   async *extract(): AsyncGenerator<IngestionItem[]> {
+    // Upsert user (display name updated on next Discord interaction)
+    this.userId = await this.repo.upsertUser(
+      this.userDiscordId,
+      this.userDiscordId,
+    );
+
     const files = await readdir(this.dirPath);
     const supportedExts = [".md", ".txt"];
 
@@ -23,7 +35,9 @@ class DocumentLoaderService extends BaseIngestionService {
       process.exit(1);
     }
 
-    console.log(`Found ${docFiles.length} document(s) to ingest.`);
+    console.log(
+      `Found ${docFiles.length} document(s) to ingest for user ${this.userDiscordId}.`,
+    );
 
     for (const file of docFiles) {
       const filePath = join(this.dirPath, file);
@@ -40,6 +54,7 @@ class DocumentLoaderService extends BaseIngestionService {
           chunkIndex: c.index,
           totalChunks: chunks.length,
         },
+        userId: this.userId,
       }));
 
       yield items;
@@ -47,12 +62,16 @@ class DocumentLoaderService extends BaseIngestionService {
   }
 }
 
-// Usage: bun run src/ingestion/document-loader.ts <directory>
+// Usage: bun run src/ingestion/document-loader.ts <directory> <userDiscordId>
 const dirPath = process.argv[2];
-if (!dirPath) {
-  console.error("Usage: bun run src/ingestion/document-loader.ts <directory>");
+const userDiscordId = process.argv[3];
+if (!dirPath || !userDiscordId) {
+  console.error(
+    "Usage: bun run src/ingestion/document-loader.ts <directory> <userDiscordId>",
+  );
   process.exit(1);
 }
 
-const service = new DocumentLoaderService(dirPath);
+const repo = new KnowledgeRepository();
+const service = new DocumentLoaderService(dirPath, userDiscordId, repo);
 service.run().then(() => process.exit(0));

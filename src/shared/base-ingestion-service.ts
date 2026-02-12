@@ -26,6 +26,8 @@ export abstract class BaseIngestionService {
           embedding: embeddings[idx],
           sourceType: item.sourceType,
           metadata: item.metadata,
+          userId: item.userId,
+          guildId: item.guildId ?? null,
         }));
 
         await this.repository.insertMany(rows);
