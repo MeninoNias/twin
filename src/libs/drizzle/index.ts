@@ -4,7 +4,7 @@ export {
   sourceTypeEnum,
   type KnowledgeBaseRecord,
   type NewKnowledgeBaseRecord,
-} from "./schema";
+} from "./schemas";
 export { runMigrations } from "./migrate";
 export { sql } from "drizzle-orm";
 export type { PgTable, TableConfig } from "drizzle-orm/pg-core";
