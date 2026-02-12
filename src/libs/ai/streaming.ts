@@ -1,1 +1,1 @@
-export { streamText } from "ai";
+export { generateText, streamText } from "ai";
