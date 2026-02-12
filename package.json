@@ -11,7 +11,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "ingest:discord": "bun run src/ingestion/discord-scraper.ts",
-    "ingest:docs": "bun run src/ingestion/document-loader.ts"
+    "ingest:docs": "bun run src/ingestion/document-loader.ts",
+    "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
     "ai": "^4.1.0",
