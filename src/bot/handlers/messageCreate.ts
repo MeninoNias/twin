@@ -1,7 +1,11 @@
 import { streamText, getModel } from "@/libs/ai";
 import { stripMention, createStreamEditor } from "@/libs/discord";
 import type { Message } from "@/libs/discord";
-import { searchKnowledge } from "@/knowledge/knowledge-search";
+import {
+  searchKnowledge,
+  getGuildOwner,
+  getUserByDiscordId,
+} from "@/knowledge/knowledge-search";
 import { buildSystemPrompt } from "@/knowledge/prompt-builder";
 import { env } from "@/env";
 import { client } from "../client";
@@ -29,11 +33,37 @@ export async function handleMessageCreate(message: Message) {
   const editor = createStreamEditor(reply);
 
   try {
-    const results = await searchKnowledge(query, { limit: 20 });
-    const userName = message.guild
-      ? (await message.guild.members.fetch(env.DISCORD_USER_ID)).displayName
-      : "User";
+    let userId: string;
+    let guildId: string | undefined;
+    let userName: string;
 
+    if (message.guild) {
+      const owner = await getGuildOwner(message.guild.id);
+      if (!owner) {
+        await reply.edit(
+          "This guild hasn't been set up yet. Run ingestion first.",
+        );
+        return;
+      }
+      userId = owner.userId;
+      guildId = owner.guildId;
+      userName = owner.displayName;
+    } else {
+      // DM fallback — use DISCORD_USER_ID
+      const user = await getUserByDiscordId(env.DISCORD_USER_ID);
+      if (!user) {
+        await reply.edit("Bot not configured yet. Run ingestion first.");
+        return;
+      }
+      userId = user.id;
+      userName = user.displayName;
+    }
+
+    const results = await searchKnowledge(query, {
+      userId,
+      guildId,
+      limit: 20,
+    });
     const systemPrompt = buildSystemPrompt(results, userName);
 
     const { textStream } = streamText({
