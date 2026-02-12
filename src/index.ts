@@ -4,7 +4,7 @@ import { handleMessageCreate } from "./bot/handlers/messageCreate";
 
 client.on("messageCreate", handleMessageCreate);
 
-client.once("ready", () => {
+client.once("clientReady", () => {
   console.log(`Logged in as ${client.user?.tag}`);
 });
 

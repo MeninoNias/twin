@@ -1,5 +1,5 @@
-import { streamText, getModel } from "@/libs/ai";
-import { stripMention, createStreamEditor } from "@/libs/discord";
+import { generateText, getModel } from "@/libs/ai";
+import { stripMention, splitMessage } from "@/libs/discord";
 import type { Message } from "@/libs/discord";
 import {
   searchKnowledge,
@@ -29,9 +29,6 @@ export async function handleMessageCreate(message: Message) {
   const query = stripMention(message.content, botId);
   if (!query) return;
 
-  const reply = await message.reply("...");
-  const editor = createStreamEditor(reply);
-
   try {
     let userId: string;
     let guildId: string | undefined;
@@ -40,7 +37,7 @@ export async function handleMessageCreate(message: Message) {
     if (message.guild) {
       const owner = await getGuildOwner(message.guild.id);
       if (!owner) {
-        await reply.edit(
+        await message.reply(
           "This guild hasn't been set up yet. Run ingestion first.",
         );
         return;
@@ -52,7 +49,7 @@ export async function handleMessageCreate(message: Message) {
       // DM fallback — use DISCORD_USER_ID
       const user = await getUserByDiscordId(env.DISCORD_USER_ID);
       if (!user) {
-        await reply.edit("Bot not configured yet. Run ingestion first.");
+        await message.reply("Bot not configured yet. Run ingestion first.");
         return;
       }
       userId = user.id;
@@ -66,19 +63,17 @@ export async function handleMessageCreate(message: Message) {
     });
     const systemPrompt = buildSystemPrompt(results, userName);
 
-    const { textStream } = streamText({
+    const { text } = await generateText({
       model: getModel(),
       system: systemPrompt,
       messages: [{ role: "user", content: query }],
     });
 
-    for await (const chunk of textStream) {
-      editor.append(chunk);
+    for (const part of splitMessage(text)) {
+      await message.reply(part);
     }
-
-    await editor.finalize();
   } catch (error) {
     console.error("Error handling message:", error);
-    await reply.edit("Something went wrong. Try again later.");
+    await message.reply("Something went wrong. Try again later.");
   }
 }

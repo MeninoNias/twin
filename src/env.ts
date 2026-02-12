@@ -6,9 +6,15 @@ const envSchema = z
     DISCORD_USER_ID: z.string().min(1),
     DATABASE_URL: z.string().url(),
     OPENAI_API_KEY: z.string().min(1),
-    LLM_PROVIDER: z.enum(["anthropic", "google"]).default("anthropic"),
-    ANTHROPIC_API_KEY: z.string().min(1).optional(),
-    GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1).optional(),
+    LLM_PROVIDER: z.enum(["anthropic", "google", "openai"]).default("openai"),
+    ANTHROPIC_API_KEY: z.preprocess(
+      (val) => (val === "" ? undefined : val),
+      z.string().min(1).optional(),
+    ),
+    GOOGLE_GENERATIVE_AI_API_KEY: z.preprocess(
+      (val) => (val === "" ? undefined : val),
+      z.string().min(1).optional(),
+    ),
   })
   .superRefine((data, ctx) => {
     if (data.LLM_PROVIDER === "anthropic" && !data.ANTHROPIC_API_KEY) {

@@ -20,9 +20,13 @@ class DiscordScraperService extends BaseIngestionService {
     await client.login(env.DISCORD_TOKEN);
     console.log(`Logged in as ${client.user?.tag}`);
 
-    const channel = await client.channels.fetch(this.channelId);
+    const channel = await client.channels
+      .fetch(this.channelId)
+      .catch(() => null);
     if (!channel || !(channel instanceof TextChannel)) {
-      console.error("Channel not found or not a text channel");
+      console.error(
+        `Channel ${this.channelId} not found or not a text channel`,
+      );
       client.destroy();
       process.exit(1);
     }
