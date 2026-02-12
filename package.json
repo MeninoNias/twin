@@ -1,0 +1,30 @@
+{
+  "name": "twin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "ingest:discord": "bun run src/ingestion/discord-scraper.ts",
+    "ingest:docs": "bun run src/ingestion/document-loader.ts"
+  },
+  "dependencies": {
+    "ai": "^4.1.0",
+    "@ai-sdk/openai": "^1.2.0",
+    "@ai-sdk/anthropic": "^1.2.0",
+    "@ai-sdk/google": "^1.2.0",
+    "discord.js": "^14.16.0",
+    "drizzle-orm": "^0.38.0",
+    "postgres": "^3.4.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "drizzle-kit": "^0.30.0",
+    "typescript": "^5.7.0"
+  }
+}
