@@ -17,7 +17,7 @@
   "dependencies": {
     "ai": "^4.1.0",
     "@ai-sdk/openai": "^1.2.0",
-    "@ai-sdk/anthropic": "^1.2.0",
+    "@ai-sdk/anthropic": "^3.0.42",
     "@ai-sdk/google": "^1.2.0",
     "discord.js": "^14.16.0",
     "drizzle-orm": "^0.38.0",
