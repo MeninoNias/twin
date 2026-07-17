@@ -15,9 +15,9 @@
     "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
-    "ai": "^4.1.0",
+    "ai": "^7.0.29",
     "@ai-sdk/openai": "^4.0.15",
-    "@ai-sdk/anthropic": "^3.0.42",
+    "@ai-sdk/anthropic": "^4.0.15",
     "@ai-sdk/google": "^3.0.27",
     "discord.js": "^14.16.0",
     "drizzle-orm": "^0.45.1",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.2.0",
-    "drizzle-kit": "^0.30.0",
-    "typescript": "^5.7.0"
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^7.0.2"
   }
 }
