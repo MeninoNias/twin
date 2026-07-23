@@ -18,7 +18,7 @@
     "ai": "^7.0.29",
     "@ai-sdk/openai": "^4.0.15",
     "@ai-sdk/anthropic": "^4.0.15",
-    "@ai-sdk/google": "^3.0.27",
+    "@ai-sdk/google": "^4.0.23",
     "discord.js": "^14.16.0",
     "drizzle-orm": "^0.45.1",
     "postgres": "^3.4.0",
